@@ -1,3 +1,2 @@
-Python 3.12.4
-spotipy version??
-billboard version??
+billboard.py==7.1.0
+pandas==2.2.2
