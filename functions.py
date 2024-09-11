@@ -4,7 +4,9 @@ import os
 from dotenv import load_dotenv
 import spotipy
 from datetime import date, timedelta
-
+import seaborn as sns
+import pprint
+import matplotlib.pyplot as plt
 
 # Load environment variables
 load_dotenv()
