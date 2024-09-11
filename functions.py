@@ -1,14 +1,17 @@
 import pandas as pd
+import billboard
 import os
 from dotenv import load_dotenv
+import spotipy
+from datetime import date, timedelta
+
 
 # Load environment variables
 load_dotenv()
 
+# Set up Spotify API credentials
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-
-import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 #Initialize SpotiPy with user credentials
@@ -16,8 +19,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID,
                                                            client_secret=CLIENT_SECRET))
 
 
-
-def get_years_rank(chart_name = "hot-100-songs", start_year, end_year):
+def get_years_rank(start_year, end_year, chart_name = "hot-100-songs"):
     
     """
     Retrieve Billboard chart data for a given range of years.
@@ -69,7 +71,21 @@ def get_track_details(name_string,sp=sp):
 
 
 def get_track_genre(id,sp=sp):
+    """
+    Fetch the audio features for a given track id.
 
+    Parameters
+    ----------
+    id : str
+        The Spotify track ID.
+    sp : SpotifyClientCredentials
+        Spotify client credentials object.
+
+    Returns
+    -------
+    dict
+        Audio features of the track.
+    """
     result= sp.audio_features(id)[0]
     return {
         'danceability': result['danceability'],
@@ -146,3 +162,90 @@ def create_multiple_tracks_df(songs_list):
     
     # Convertir la lista de diccionarios en un DataFrame
     return pd.DataFrame(track_info_list)
+
+
+def list_dates_in_range(start_dt, end_dt, step=7):
+     
+    """
+    Generates a list of dates in a given range with a given step.
+
+    Parameters
+    ----------
+    start_dt : str
+        The start date in the format 'YYYY-MM-DD'.
+    end_dt : str
+        The end date in the format 'YYYY-MM-DD'.
+    step : int, optional
+        The step between each date in days. Default is 7 (weekly).
+
+    Returns
+    -------
+    list
+        A list of dates in the given range with the given step.
+    """
+    try:
+        start_dt=date.fromisoformat(start_dt)
+        end_dt = date.fromisoformat(end_dt)
+        date_list = []
+        
+        for n in range(0, int((end_dt - start_dt).days) + 1, step):
+            date_list.append(str(start_dt + timedelta(n)))
+
+        return date_list
+    except:
+        print("Start and end dates must be in iso format YYYY-MM-DD")
+
+
+def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100"):
+
+    dates = list_dates_in_range(start_dt, end_dt, step=7)
+
+    charts_list = []
+
+    for date in dates:
+        chart = billboard.ChartData(chart_name, date=date)
+        for entry in chart:
+            entry_dict = {'date': date, 
+                          'title': entry.title, 
+                          'artist': entry.artist,
+                          'peakPos': entry.peakPos, 
+                          'rank': entry.rank,
+                          'lastPos': entry.lastPos,
+                          'weeksOnChart': entry.weeks
+                          }
+            charts_list.append(entry_dict)
+
+    return pd.DataFrame(charts_list)
+
+# Filter duplicates
+
+def calculate_rank_peak_data(df):
+
+    """
+    Calculate the peak position, maximum number of weeks on the chart, and earliest date reached for each song.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A DataFrame with columns 'title', 'artist', 'peak_pos', 'rank', 'weeks', and 'date'.
+
+    Returns
+    -------
+    result : pandas.DataFrame
+        A DataFrame with columns 'title', 'artist', 'peak_pos', 'weeks', 'paak_rank', and 'date'.
+    """
+    # Group by the title of the song
+    grouped = df.groupby('title').agg(
+        artist = ('artist', 'first'),  # Get the first artist
+        peak_pos=('peak_pos', 'max'),  # Get the maximum peak position
+        weeks=('weeks', 'max'),         # Get the maximum number of weeks
+        paak_rank=('rank', 'min')         # Get the maximum rank
+    ).reset_index()
+
+    # Find the date when the max peak_pos was recorded
+    peak_date = df.loc[df.groupby('title')['peak_pos'].idxmax(), ['title', 'date']]
+    
+    # Merge the peak date information into the grouped dataframe
+    result = pd.merge(grouped, peak_date, on='title')
+    
+    return result
