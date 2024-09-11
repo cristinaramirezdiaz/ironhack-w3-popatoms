@@ -1,10 +1,8 @@
-!pip install spotipy
-
 import pandas as pd
 import os
 from dotenv import load_dotenv
 
-
+# Load environment variables
 load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
