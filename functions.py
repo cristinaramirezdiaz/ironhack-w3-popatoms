@@ -238,3 +238,44 @@ def create_audio_analysis_df(df):
 
     # Convertir la lista de diccionarios en un DataFrame
     return df
+
+
+# plot function for df
+def plot_year_mean(df, params, type="bar", year_column='peak_year', figsize=(10,6), grid=True):
+
+    plt.figure(figsize=figsize)
+    
+    # plot each parameter
+
+    if type =="bar": 
+        for param in params:
+            sns.barplot(df, x=df[year_column],y=df[param])
+    elif type == "line": 
+        for param in params:
+            sns.lineplot(x=year_column, y=param, data=df, label=param)
+    
+    # Configurar la gráfica
+    plt.title(f'{", ".join(params)} mean per year', fontsize=16)
+    plt.xlabel('Year', fontsize=14)
+    plt.ylabel(f'{", ".join(params)}', fontsize=14)
+    plt.legend(title="Params")
+    plt.grid(grid)
+    plt.xticks(rotation=45)
+    
+    # Mostrar la gráfica
+    plt.show()
+
+def parse_dates(date_str):
+    date_formats = ['%Y-%m-%d']
+    for fmt in date_formats:
+        try:
+            return pd.to_datetime(date_str, format=fmt)
+        except ValueError:
+            continue
+    return pd.NaT
+
+
+def parse_years(date_str):
+    if pd.to_datetime(date_str, format='%Y', errors='coerce') is not pd.NaT:
+        return pd.to_datetime(date_str, format='%Y').replace(month=1, day=1)
+    return pd.NaT
