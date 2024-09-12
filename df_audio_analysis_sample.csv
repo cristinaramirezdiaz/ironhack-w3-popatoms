@@ -1,4 +1,4 @@
-title,album,popularity,artists,colab,release_date,danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,duration ms
+title_spotify,album,sp_popularity,artist,colab,release_date,danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,duration
 It's Now or Never,Platinum - A Life In Music,58,Elvis Presley,N,1997-07-15,0.633,0.365,4,-14.94,1,0.0403,0.428,0.00378,0.569,0.743,126.266,193.90668
 Smoke Gets In Your Eyes,Remember When?,64,The Platters,N,1959-01-01,0.203,0.295,3,-11.155,1,0.0323,0.92,2.05e-06,0.173,0.285,171.222,160.93333
 The Twist,Dancin' Party: The Chubby Checker Collection (1960-1966),61,Chubby Checker,N,2020-06-19,0.571,0.618,4,-5.682,1,0.0371,0.18,2.69e-06,0.178,0.852,156.892,155.04
