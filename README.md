@@ -34,8 +34,50 @@ BILLBOARD_API_KEY=tu_billboard_api_key
 ```
 # 🚀 Ejecución del Proyecto
 
-**Ejecutar el archivo principal:** Para comenzar con el análisis y la extracción de datos, ejecuta el archivo `main.py`:
+Ejecutar el archivo principal: Para comenzar con el análisis y la extracción de datos, ejecuta el archivo main.py:
 
 ```bash
 python main.py
 ```
+
+Análisis Exploratorio de Datos (EDA): Si quieres visualizar gráficos y explorar los datos, abre el notebook eda.ipynb con Jupyter:
+
+```bash
+jupyter notebook eda.ipynb
+```
+# 📊 Descripción del Análisis
+
+- API de Spotify: De esta API hemos obtenido datos relacionados con las características de las canciones, como el tempo, la energía, la duración, el modo, entre otros.
+- API de Billboard: De esta API hemos extraído los rankings históricos de las canciones más populares, permitiendo hacer un análisis temporal.
+El análisis se ha centrado en entender cómo estos atributos y características cambian a lo largo del tiempo y su impacto en la popularidad.
+
+# 📈 Resultados y Conclusiones
+Los resultados obtenidos a partir de los análisis gráficos y estadísticos revelan una serie de tendencias sobre cómo las características de las canciones exitosas han cambiado a lo largo de los últimos 50 años: 
+
+ - 
+
+# 💡 Hipótesis Iniciales
+Antes de realizar el análisis, partimos de las siguientes hipótesis:
+
+- Las canciones han reducido su duración en los últimos años (probablemente debido a la influencia de plataformas como TikTok).
+- La música se ha vuelto más calmada, con un tempo más lento.
+- Sin embargo, es probable que la intensidad del sonido (loudness) no haya disminuido.
+- Las tonalidades menores se han vuelto más frecuentes en los últimos años.
+- El compás más común sigue siendo el 4/4, con mucha diferencia.
+- La música ha tendido a volverse más repetitiva en los últimos años.
+- Los temas relacionados con la protesta, especialmente los que abordan el feminismo, son más comunes en la actualidad.
+# 👥 Acerca del Equipo
+Gabriela: https://www.linkedin.com/in/gabriela-casero-59233a131/
+Almudena:  https://www.linkedin.com/in/almudenamcastro/
+# 🛠️ Herramientas Utilizadas
+- Lenguaje: Python
+- APIs: Spotify, Billboard
+- Librerías:
+--  requests: Para la interacción con las APIs
+--  pandas: Para la manipulación de datos
+-- matplotlib / seaborn: Para la visualización de datos
+- dotenv: Para gestionar las credenciales de las APIs
+- jupyter: Para el análisis exploratorio
+# 📝 Contribuciones
+Si deseas contribuir a este proyecto, no dudes en enviar un pull request o reportar issues. Todos los comentarios y sugerencias son bienvenidos.
+
