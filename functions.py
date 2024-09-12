@@ -266,6 +266,22 @@ def plot_year_mean(df, params, type="bar", year_column='peak_year', figsize=(10,
     plt.show()
 
 def parse_dates(date_str):
+    """
+    Try to parse a date from a string.
+
+    This function tries to parse a date from a string, using the following
+    formats: %Y-%m-%d. If no valid date can be parsed, it returns NaT.
+
+    Parameters
+    ----------
+    date_str : str
+        The string to parse as a date
+
+    Returns
+    -------
+    date : pd.Timestamp or pd.NaT
+        The parsed date, or NaT if no valid date can be parsed
+    """
     date_formats = ['%Y-%m-%d']
     for fmt in date_formats:
         try:
