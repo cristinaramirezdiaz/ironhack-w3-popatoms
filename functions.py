@@ -24,40 +24,103 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID,
                                                            client_secret=CLIENT_SECRET))
 
 
-def get_years_rank(start_year, end_year, chart_name = "hot-100-songs"):
-    
+def list_dates_in_range(start_dt, end_dt, step=7):
+     
     """
-    Retrieve Billboard chart data for a given range of years.
+    Generates a list of dates in a given range with a given step.
 
     Parameters
     ----------
-    chart_name : str, optional
-        The name of the Billboard chart to retrieve. Defaults to "hot-100-songs".
-    start_year : int
-        The first year of the range of years to retrieve.
-    end_year : int
-        The last year of the range of years to retrieve.
+    start_dt : str
+        The start date in the format 'YYYY-MM-DD'.
+    end_dt : str
+        The end date in the format 'YYYY-MM-DD'.
+    step : int, optional
+        The step between each date in days. Default is 7 (weekly).
 
     Returns
     -------
-    df : pandas.DataFrame
-        A DataFrame containing the chart data for the given range of years. The columns are 'rank_year', 'title', 'artist', and 'rank'.
+    list
+        A list of dates in the given range with the given step.
     """
-    year_values = []
-    artist_values = []
-    title_values = []
-    rank_values = []
+    try:
+        start_dt=date.fromisoformat(start_dt)
+        end_dt = date.fromisoformat(end_dt)
+        date_list = []
+        
+        for n in range(0, int((end_dt - start_dt).days) + 1, step):
+            date_list.append(str(start_dt + timedelta(n)))
 
-    for year in range (start_year, end_year+1):
-        chart = billboard.ChartData(chart_name, year=year)
+        return date_list
+    except:
+        print("Start and end dates must be in iso format YYYY-MM-DD")
+
+
+# create_weekly_ranks_df generates a pandas DataFrame containing weekly music chart rankings from Billboard.
+# It takes in a date range (start_dt and end_dt) and optionally an input CSV file. If an input file is provided, it continues from the last date in the file; otherwise, it starts from the specified start_dt.
+# The function then iterates over each week in the date range, fetches the corresponding Billboard chart data, and appends it to the DataFrame, which is saved to a CSV file (output_file) after each week's data is added.
+# The function returns the final DataFrame.
+def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", step=30, input_file = "", output_file="df_weekly_rankings.csv"):
+
+     # if there's a csv file, we can use it as starting point. 
+    if input_file != "":
+        df = pd.read_csv(input_file )
+        output_file = input_file 
+        start_dt = str(date.fromisoformat(df.date.max()) + timedelta(days=7))
+        i=len(df)
+    
+    else: 
+        df = pd.DataFrame(columns = ["date", "title", "artist", "peak_pos", "rank", "weeks"])
+        i=0
+
+    dates = list_dates_in_range(start_dt, end_dt, step)
+    
+    for value in dates: 
+        chart = billboard.ChartData("hot-100", date=value)
         for entry in chart:
-            year_values.append(year)
-            title_values.append(entry.title)
-            artist_values.append(entry.artist)
-            rank_values.append(entry.rank)
+            df.loc[i, "date"] = value
+            df.loc[i, "title"] = entry.title
+            df.loc[i, "artist"] = entry.artist
+            df.loc[i, "peak_pos"] = entry.peakPos
+            df.loc[i, "rank"] = entry.rank
+            df.loc[i, "weeks"] = entry.weeks
+            df.to_csv(output_file, index=False)
+            i+=1
 
-    df = pd.DataFrame({'rank_year': year_values, 'title': title_values, 'artist': artist_values, 'rank': rank_values})
+    # concatenate temp_df with df_temp if there's a csv file
+
     return df
+
+
+def calculate_ranks_peaks(df):
+
+    """
+    Calculate the peak position, maximum number of weeks on the chart, and earliest date reached for each song.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A DataFrame with columns 'title', 'artist', 'peak_pos', 'rank', 'weeks', and 'date'.
+
+    Returns
+    -------
+    result : pandas.DataFrame
+        A DataFrame with columns 'title', 'artist', 'peak_pos', 'weeks', 'paak_rank', and 'date'.
+    """
+    # Group by the title of the song
+    grouped = df.groupby('title').agg(
+        artist = ('artist', 'first'),  # Get the first artist
+        weeks=('weeks', 'max'),         # Get the maximum number of weeks
+        peak_rank=('rank', 'min')         # Get the maximum rank
+    ).reset_index()
+
+    # Find the date when the max peak_pos was recorded
+    peak_date = df.loc[df.groupby('title')['peak_pos'].idxmax(), ['title', 'date']]
+    
+    # Merge the peak date information into the grouped dataframe
+    result = pd.merge(grouped, peak_date, on='title')
+    
+    return result
 
 
 def get_track_details(name_string,sp=sp):
@@ -109,168 +172,23 @@ def get_track_genre(id,sp=sp):
     }
 
 
-# He dejado esos valores ahí por si nos interesa llamar al confidence
-# o investigar si el fade out se ha pasado de moda ?¿?¿
+''' 
+def get_audio_analysis(id,sp=sp):
+# This query would allow us to get more detailed data on the song
+# (fade out, tempo confidence, etc.)
+   result = sp.audio_analysis(id)['track']
+   
+   return {'duration': result['duration'],
+           'start_of_fade_out': ['start_of_fade_out'],
+           'tempo': result['tempo'],
+           'tempo_confidence': result['tempo_confidence'],
+           'key': result['key'],
+           'key_confidence': result['key_confidence'],
+           'mode': result['mode'],
+           'mode_confidence': result['mode_confidence']
+   }
+
 '''
- def get_audio_analysis(id,sp=sp):
-
-#   result = sp.audio_analysis(id)['track']
-#  'start_of_fade_out': 171.68254,
-#  'tempo': 173.988,
-#  'tempo_confidence': 0.125,
-#  'key': 8,
-#  'key_confidence': 0.413,
-#  'mode': 1,
-#  'mode_confidence': 0.512,
-    return {'duration': result['duration']}
-'''
-
-'''
-# Deprecated
-def create_multiple_tracks_df(songs_list):
-    # Lista de diccionarios de cada canción 
-    track_info_list = [] 
-
-    for song in songs_list:
-        try:
-            # Info de la canción
-            track_details = get_track_details(song)
-            id = track_details['id']  # id de la canción que usamos para analysis
-            
-            # Llamamos a las funciones de genre y analysis
-            track_genre = get_track_genre(id)
-            audio_analysis = get_audio_analysis(id)
-            
-            # Combinamos toda la info en un sólo diccionario y vemos si es colabo
-            track_info_dict = {
-                'name': track_details['name'],
-                'album': track_details['album'],
-                'popularity': track_details['popularity'],
-                'artists': ', '.join(track_details['artists']),
-                'colab': ("Y" if len(track_details['artists']) > 1 else "N"),
-                'release_date': track_details['release_date'],
-                'danceability': track_genre['danceability'],
-                'energy': track_genre['energy'],
-                'key': track_genre['key'],
-                'loudness': track_genre['loudness'],
-                'mode': track_genre['mode'],
-                'speechiness': track_genre['speechiness'],
-                'acousticness': track_genre['acousticness'],
-                'instrumentalness': track_genre['instrumentalness'],
-                'liveness': track_genre['liveness'],
-                'valence': track_genre['valence'],
-                'tempo': track_genre['tempo'],
-                'duration ms': audio_analysis['duration'],
-            }
-            
-            # Añadir el diccionario a la lista
-            track_info_list.append(track_info_dict)
-
-            
-        except Exception as e:
-            print(f"Error obteniendo detalles para '{song}': {e}")
-    
-    # Convertir la lista de diccionarios en un DataFrame
-    return pd.DataFrame(track_info_list)
-'''
-
-def list_dates_in_range(start_dt, end_dt, step=7):
-     
-    """
-    Generates a list of dates in a given range with a given step.
-
-    Parameters
-    ----------
-    start_dt : str
-        The start date in the format 'YYYY-MM-DD'.
-    end_dt : str
-        The end date in the format 'YYYY-MM-DD'.
-    step : int, optional
-        The step between each date in days. Default is 7 (weekly).
-
-    Returns
-    -------
-    list
-        A list of dates in the given range with the given step.
-    """
-    try:
-        start_dt=date.fromisoformat(start_dt)
-        end_dt = date.fromisoformat(end_dt)
-        date_list = []
-        
-        for n in range(0, int((end_dt - start_dt).days) + 1, step):
-            date_list.append(str(start_dt + timedelta(n)))
-
-        return date_list
-    except:
-        print("Start and end dates must be in iso format YYYY-MM-DD")
-
-
-def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", csv_path="", step=30):
-
-     # if there's a csv file, we can use it as starting point. 
-    if csv_path != "":
-        df = pd.read_csv(csv_path)
-        start_dt = str(date.fromisoformat(df.date.max()) + timedelta(days=7))
-        i=len(df)
-    
-    else: 
-        df = pd.DataFrame(columns = ["date", "title", "artist", "peak_pos", "rank", "weeks"])
-        i=0
-
-
-    dates = list_dates_in_range(start_dt, end_dt, step)
-    
-
-    for value in dates:
- 
-        chart = billboard.ChartData("hot-100", date='1961-08-18')
-        for entry in chart:
-            df.loc[i, "date"] = value
-            df.loc[i, "title"] = entry.title
-            df.loc[i, "artist"] = entry.artist
-            df.loc[i, "peak_pos"] = entry.peakPos
-            df.loc[i, "rank"] = entry.rank
-            df.loc[i, "weeks"] = entry.weeks
-            df.to_csv('weekly_rankings_temp.csv', index=False)
-            i+=1
-
-    # concatenate temp_df with df_temp if there's a csv file
-
-    return df
-
-
-# Filter duplicates
-
-def calculate_rank_peak_data(df):
-
-    """
-    Calculate the peak position, maximum number of weeks on the chart, and earliest date reached for each song.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        A DataFrame with columns 'title', 'artist', 'peak_pos', 'rank', 'weeks', and 'date'.
-
-    Returns
-    -------
-    result : pandas.DataFrame
-        A DataFrame with columns 'title', 'artist', 'peak_pos', 'weeks', 'paak_rank', and 'date'.
-    """
-    # Group by the title of the song
-    grouped = df.groupby('title').agg(
-        artist = ('artist', 'first'),  # Get the first artist
-        weeks=('weeks', 'max'),         # Get the maximum number of weeks
-        peak_rank=('rank', 'min')         # Get the maximum rank
-    ).reset_index()
-
-    # Find the date when the max peak_pos was recorded
-    peak_date = df.loc[df.groupby('title')['peak_pos'].idxmax(), ['title', 'date']]
-    
-    # Merge the peak date information into the grouped dataframe
-    result = pd.merge(grouped, peak_date, on='title')
-    
-    return result
 
 def create_audio_analysis_df(df):
 
