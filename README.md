@@ -1,14 +1,19 @@
-# 🎵 Popatoms
+## 🎵 Popatoms
 
 This project aims to analyze the major musical hits of the past 50 years to understand the influence of various factors on the popularity of songs, as well as their evolution. Using data extracted from the Spotify API and the Billboard API, we explore features such as energy, tempo, duration, and other attributes to understand their relationship with chart success.
 
-## 📁 Project Structure
+## 👥 The Team
+Gabriela: https://www.linkedin.com/in/gabriela-casero-59233a131/
+Almudena: https://www.linkedin.com/in/almudenamcastro/
+
+
+## 📁 Files Structure
 
 The project is organized into the following key files and folders:
 
+- `df....csv`: Saved data frames.  
 - `main.py`: The main project file that runs the overall analysis, data collection, preprocessing, and analysis.
 - `functions.py`: Contains helper functions to interact with the APIs, process data, and manipulate the results.
-- `eda.ipynb`: A notebook that performs Exploratory Data Analysis (EDA) and visualizes the results through graphs. This is where we explore the data in depth.
 - `requirements.txt`: A list of dependencies required to run the project.
 - `README.md`: This file describes the purpose of the project and how to run it.
 
@@ -72,9 +77,6 @@ Before conducting the analysis, we started with the following hypotheses:
 - Music has tended to become more repetitive in recent years.
 - Protest-related themes, especially those addressing feminism, are more common today.
 
-# 👥 About the Team
-Gabriela: https://www.linkedin.com/in/gabriela-casero-59233a131/
-Almudena: https://www.linkedin.com/in/almudenamcastro/
 
 # 🛠️ Tools Used
 
