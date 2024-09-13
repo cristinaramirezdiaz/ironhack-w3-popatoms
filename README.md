@@ -21,8 +21,18 @@ We believe that:
 - Music has become more repetitive during the last few years.
 - There are more vindictive topics, specially related with feminism.
 
+Presentation with more info: https://www.canva.com/design/DAGQjz4IelY/GuO8nIyDawsMBsXLvI5mQA/view?utm_content=DAGQjz4IelY&utm_campaign=designshare&utm_medium=link&utm_source=editor
 
 ## Project content
+### 📁 Files Structure
+The project is organized into the following key files and folders:
+
+- `df....csv`: Saved data frames.  
+- `main.py`: The main project file that runs the overall analysis, data collection, preprocessing, and analysis.
+- `functions.py`: Contains helper functions to interact with the APIs, process data, and manipulate the results.
+- `requirements.txt`: A list of dependencies required to run the project.
+- `README.md`: This file describes the purpose of the project and how to run it.
+
 ### 📊 Data Sources
 
 - **Spotify API**: From this API, we obtained data related to song features, such as tempo, energy, duration, mode, and others.
@@ -42,23 +52,13 @@ The analysis focused on understanding how these attributes and features change o
   - `jupyter`: For exploratory analysis
 
 
-# 📈 Results and Conclusions
+## 📈 Results and Conclusions
 
 - Music popularity increased dramatically after 1960. 
 - Music accousticness has decreased over the years. 
 - Music loudness has increased significantly. 
 
-## Project Code
-
-### 📁 Files Structure
-
-The project is organized into the following key files and folders:
-
-- `df....csv`: Saved data frames.  
-- `main.py`: The main project file that runs the overall analysis, data collection, preprocessing, and analysis.
-- `functions.py`: Contains helper functions to interact with the APIs, process data, and manipulate the results.
-- `requirements.txt`: A list of dependencies required to run the project.
-- `README.md`: This file describes the purpose of the project and how to run it.
+## How to run the Code
 
 ### 🔧 Installation and Setup
 
@@ -99,6 +99,6 @@ jupyter notebook eda.ipynb
 
 If you want to contribute to this project, feel free to send a pull request or report issues. All feedback and suggestions are welcome.
 
-## Sources: 
+## Other sources: 
 - https://www.latimes.com/entertainment/tv/showtracker/la-et-st-beatles-ed-sullivan-50-years-20140202-story.html
 
