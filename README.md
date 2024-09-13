@@ -1,13 +1,29 @@
 ## 🎵 Popatoms
+looking for the future by looking at the past
 
-This project aims to analyze the major musical hits of the past 50 years to understand the influence of various factors on the popularity of songs, as well as their evolution. Using data extracted from the Spotify API and the Billboard API, we explore features such as energy, tempo, duration, and other attributes to understand their relationship with chart success.
-
-## 👥 The Team
+### 👥 The Team
 Gabriela: https://www.linkedin.com/in/gabriela-casero-59233a131/
 Almudena: https://www.linkedin.com/in/almudenamcastro/
 
+### Business Opportunity: 
+Every year the music market changes and new trends appear that change how we listen to music. 
+This project aims to analyze the major musical hits of the past 50 years to understand the influence of various factors on the popularity of songs, as well as their evolution. Using data extracted from the Spotify API and the Billboard API, we explore features such as energy, tempo, duration, and other attributes to understand their relationship with chart success.
 
-## 📁 Files Structure
+### Initial Hypothesis: 
+We believe that: 
+
+- Music tracks have decreased their duration 
+(probably due to the influence of TikTok and similar apps)
+- Music has become more calm (tempo is slower).
+- Nonetheless, music loudness hasn’t probably decreased
+- Minor keys have become more frequent during the last years.
+- The most common metric is 4/4 (by far).
+- Music has become more repetitive during the last few years.
+- There are more vindictive topics, specially related with feminism.
+
+## Project Overview
+
+### 📁 Files Structure
 
 The project is organized into the following key files and folders:
 
@@ -17,7 +33,7 @@ The project is organized into the following key files and folders:
 - `requirements.txt`: A list of dependencies required to run the project.
 - `README.md`: This file describes the purpose of the project and how to run it.
 
-## 🔧 Installation and Setup
+### 🔧 Installation and Setup
 
 Clone this repository:
 
@@ -38,7 +54,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret
 BILLBOARD_API_KEY=your_billboard_api_key
 ```
 
-# 🚀 Running the Project
+### 🚀 Running the Project
 
 Run the main file: To begin the analysis and data extraction, execute the `main.py` file:
 
