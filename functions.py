@@ -123,7 +123,22 @@ def calculate_ranks_peaks(df):
 
 
 def get_track_details(name_string,sp=sp):
+    '''
+    COMENTARIO: 
+    Searches for a track on Spotify using the provided name and returns detailed information about the track.
 
+    Parameters
+    ----------
+    name_string : str
+        The name of the track or a search query to look up in the Spotify catalog.
+    sp : spotipy.Spotify (optional)
+        An instance of the Spotify API client.
+
+    Returns
+    -------
+    result : dict
+        A dictionary containing the track's ID, name, album, popularity, list of artists, and release date.
+    '''
     result= sp.search(q=f'{name_string}', limit=1)
     track=result['tracks']['items'][0]
 
@@ -186,6 +201,12 @@ def get_audio_analysis(id,sp=sp):
            'mode': result['mode'],
            'mode_confidence': result['mode_confidence']
    }
+
+'''
+
+'''
+COMENTARIO:
+No entendemos muy bien el comentario anterior, puede que no pudiérais utilizarlo por falta de datos y olvidasteis borrarlo?
 
 '''
 
