@@ -60,7 +60,7 @@ def list_dates_in_range(start_dt, end_dt, step=7):
 # It takes in a date range (start_dt and end_dt) and optionally an input CSV file. If an input file is provided, it continues from the last date in the file; otherwise, it starts from the specified start_dt.
 # The function then iterates over each week in the date range, fetches the corresponding Billboard chart data, and appends it to the DataFrame, which is saved to a CSV file (output_file) after each week's data is added.
 # The function returns the final DataFrame.
-def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", step=30, input_file = "", output_file="df_weekly_rankings.csv"):
+def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", step=30, input_file = "", output_file = "df_weekly_ranks.csv"):
 
      # if there's a csv file, we can use it as starting point. 
     if input_file != "":
