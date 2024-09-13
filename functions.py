@@ -9,6 +9,7 @@ import pprint
 import matplotlib.pyplot as plt
 import time
 import numpy as np
+from os.path import exists
 
 
 # Load environment variables
@@ -60,12 +61,12 @@ def list_dates_in_range(start_dt, end_dt, step=7):
 # It takes in a date range (start_dt and end_dt) and optionally an input CSV file. If an input file is provided, it continues from the last date in the file; otherwise, it starts from the specified start_dt.
 # The function then iterates over each week in the date range, fetches the corresponding Billboard chart data, and appends it to the DataFrame, which is saved to a CSV file (output_file) after each week's data is added.
 # The function returns the final DataFrame.
-def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", step=30, input_file = "", output_file = "df_weekly_ranks.csv"):
+def create_weekly_ranks_df(start_dt, end_dt, step=30, chart_name = "hot-100", csv_file = "df_weekly_ranks.csv"):
 
-     # if there's a csv file, we can use it as starting point. 
-    if input_file != "":
-        df = pd.read_csv(input_file )
-        output_file = input_file 
+     # if the csv file exists, we can use it as starting point. 
+
+    if exists(csv_file):
+        df = pd.read_csv(csv_file)
         start_dt = str(date.fromisoformat(df.date.max()) + timedelta(days=7))
         i=len(df)
     
@@ -76,7 +77,7 @@ def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", step=30, in
     dates = list_dates_in_range(start_dt, end_dt, step)
     
     for value in dates: 
-        chart = billboard.ChartData("hot-100", date=value)
+        chart = billboard.ChartData("hot-100", date=value) # get new chart from billboard api
         for entry in chart:
             df.loc[i, "date"] = value
             df.loc[i, "title"] = entry.title
@@ -84,10 +85,8 @@ def create_weekly_ranks_df(start_dt, end_dt, chart_name = "hot-100", step=30, in
             df.loc[i, "peak_pos"] = entry.peakPos
             df.loc[i, "rank"] = entry.rank
             df.loc[i, "weeks"] = entry.weeks
-            df.to_csv(output_file, index=False)
+            df.to_csv(csv_file, index=False) #save data continously
             i+=1
-
-    # concatenate temp_df with df_temp if there's a csv file
 
     return df
 
